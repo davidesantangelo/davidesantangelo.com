@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Use the title from a page's frontmatter if it has one -->
+    <title><%= current_page.data.title || "Davide Santangelo" %></title>
+    
+
+    <%= stylesheet_link_tag "site" %>
+    <%= javascript_include_tag "site" %>
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="author" content="Davide Santangelo">
+    <meta name="description" content="Davide Santangelo - Passionate Software Developer. API specialist. In love with Ruby.">
+    <meta name="keywords" content="davide santangelo web developer website creation ruby rails api">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="davidesantangelo">
+    <meta property="og:title" content="Davide Santangelo - Passionate Software Developer">
+    <meta property="og:description" content="Davide Santangelo - Passionate Software Developer. API specialist. In love with Ruby.">
+    <meta property="og:url" content="http://www.davidesantangelo.com">
+
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>
+
