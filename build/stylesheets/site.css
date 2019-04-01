@@ -15,7 +15,7 @@ time, tr, tt, u, ul, var, video {
   vertical-align: baseline; }
 
 body, html {
-  border-top: 2px solid #000;
+  border-top: 1px solid #4166D3;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
