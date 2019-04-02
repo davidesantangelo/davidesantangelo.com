@@ -18,12 +18,12 @@ time, tr, tt, u, ul, var, video {
 }
 
 body, html {
-  border-top: 1px solid #4166D3;
+  border-top: 2px solid #4166D3;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  -webkit-tap-highlight-color: transparent !important;
+  -webkit-tap-highlight-color: transparent !important; 
   padding: 0;
   margin: 0;
   -webkit-user-select: none;
@@ -36,7 +36,7 @@ body, html {
 a, a:after, a:visited {
   background-color: transparent;
   text-decoration: none;
-  color: #006eff;
+  color: #000
 }
 
 ::-webkit-scrollbar {
@@ -72,20 +72,19 @@ a, a:after, a:visited {
   color: #fff
 }
 
+a {
+  color: #4166D3 !important
+}
+
 h1 {
-  font-size: 112px;
-  font-size: 7.9vw;
+  font-size: 100px;
+  font-size: 7.2vw;
   letter-spacing: -2px;
   line-height: 110%;
   font-family: Semibold;
   position: fixed;
   top: 34%;
-  left: 10%
-}
-
-span.name{
-  color: #000;
-  font-weight: bold
+  left: 7%
 }
 
 .text {
@@ -124,24 +123,24 @@ span.name{
 }
 
 .delay {
-  -webkit-animation-delay: .4s;
-  animation-delay: .4
+  -webkit-animation-delay: .3s;
+  animation-delay: .3
 }
 
 .about {
   position: absolute;
   top: 100vh;
   left: 50%;
-  right: 10%;
+  right: 7%;
   padding-bottom: 34vh
 }
 
 h2 {
-  font-size: 32px;
-  font-size: 2.2vw;
+  font-size: 30px;
+  font-size: 2.0vw;
   line-height: 140%;
   font-family: Medium;
-  margin-bottom: 10%
+  margin-bottom: 7%
 }
 
 p {
@@ -156,18 +155,10 @@ b {
   font-family: Medium
 }
 
-.language {
-  font-weight: bold;
-}
-
-.social {
-  font-weight: bold;
-}
-
 @media screen and (max-width:667px) {
   h1 {
-      font-size: 68px;
-      font-size: 18vw
+      font-size: 60px;
+      font-size: 16vw
   }
 
   h2 {
@@ -184,7 +175,7 @@ b {
       left: 0;
       right: 0;
       background: #fff;
-      padding: 10%
+      padding: 7%
   }
 }
 
