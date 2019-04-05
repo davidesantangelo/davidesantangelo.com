@@ -101,6 +101,12 @@ h1 {
   animation-fill-mode: backwards
 }
 
+.help {
+  position: fixed;
+  bottom: 2%;
+  right: 2%;
+}
+
 @-webkit-keyframes animate {
   0% {
       -webkit-transform: translateY(100%)
