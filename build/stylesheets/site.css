@@ -50,6 +50,10 @@ a, a:after, a:visited {
 ::-webkit-scrollbar-thumb:window-inactive {
   background: #000; }
 
+::-moz-selection {
+  background: #000;
+  color: #fff; }
+
 ::selection {
   background: #000;
   color: #fff; }
