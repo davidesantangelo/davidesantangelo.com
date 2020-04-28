@@ -87,7 +87,11 @@ h1 {
 .help {
   position: fixed;
   bottom: 2%;
-  right: 2%; }
+  right: 2%;
+  cursor: pointer; }
+
+.help:hover {
+  color: #4fd1c5; }
 
 @-webkit-keyframes animate {
   0% {
