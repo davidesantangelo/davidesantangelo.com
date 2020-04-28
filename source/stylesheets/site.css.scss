@@ -1,6 +1,4 @@
-h1, p {
-  color: #000
-}
+
 
 
 a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote,
@@ -29,13 +27,14 @@ body, html {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  text-align: justify
+  text-align: justify;
+  background: #222222;
+  color: #ffffff;
 }
 
 a, a:after, a:visited {
   background-color: transparent;
   text-decoration: none;
-  color: #000
 }
 
 ::-webkit-scrollbar {
@@ -72,7 +71,7 @@ a, a:after, a:visited {
 }
 
 a {
-  color: #4166D3 !important
+  color: #4fd1c5 !important
 }
 
 h1 {
@@ -105,7 +104,6 @@ h1 {
   position: fixed;
   bottom: 2%;
   right: 2%;
-  color: darkblue
 }
 
 @-webkit-keyframes animate {

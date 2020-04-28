@@ -12,7 +12,7 @@
     <link href="/stylesheets/site.css" rel="stylesheet" />
   
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="Davide Santangelo">
     <meta name="description" content="Davide Santangelo - Passionate Software Developer. API specialist. In love with Ruby.">
@@ -45,8 +45,8 @@
     </div>
   </h1>
 
-  <div class="help">
-    <i class="fas fa-angle-down fa-lg"></i>
+  <div class="help" onclick="$('html, body').animate({ scrollTop: '500px' }, 2000); $(this).hide()">
+    <i class="fas fa-angle-down fa-2x"></i>
   </div>
 
   <div class="about">
@@ -57,11 +57,12 @@
     <p>My most recent passions are big data and machine learning. 
     When I have time, i enjoy writing code about a different purpose, my friends/colleagues call me "gemminator", because i have great knowledge of <b>rubygems</b> ecosystem (<a href="https://rubygems.org/profiles/davidesantangelo">here</a> some gems that i have developed). </p>
     <p>Take a look at my <a href="https://davidesantangelo.github.io">GitHub Page.</a> I love programming and i always try to improve myself. I love study new languages ​​and take courses in programming (Rust, Vue.js right now).</p>
-    <p><b>Projects:</b>
-      <a href="https://datorss.com">DatoRss</a> RSS Search Engine
-      <a href="https://www.tunsapp.com">TUNS</a> Twitter Unfollower Notification Service
+    <p><b>Projects</b><br>
+      <a href="https://datorss.com">DatoRss</a> RSS Search Engine<br>
+      <a href="https://www.tunsapp.com">TUNS</a> Twitter Unfollower Notification Service<br>
+      <a href="https://www.feedirss.com">FeediRSS API</a> RSS as RESTful API
     </p>
-    <p><b>Skills:</b>
+    <p><b>Skills</b><br>
       <span class="skill">Ruby</span>,
       <span class="skill">Python</span>,
       <span class="skill">Ruby On Rails</span>,
@@ -87,9 +88,6 @@
     </p>
   </div>
 </body>
-
-
-
   </body>
 </html>
 
