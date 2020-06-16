@@ -61,7 +61,7 @@ a, a:after, a:visited {
   color: #fff; }
 
 a {
-  color: #4fd1c5 !important; }
+  color: #4fd1c5; }
 
 h1 {
   font-size: 100px;
@@ -89,6 +89,14 @@ h1 {
   bottom: 2%;
   right: 2%;
   cursor: pointer; }
+
+.devto {
+  position: fixed;
+  top: 2%;
+  right: 2%; }
+
+.devto a {
+  color: #f9f9f9; }
 
 .help:hover {
   color: #4fd1c5; }
