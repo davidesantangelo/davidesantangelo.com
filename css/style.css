@@ -5,6 +5,7 @@
     --secondary-color: #e53e3e;
     --tertiary-color: #f6e05e;
     --card-bg: rgba(255, 255, 255, 0.05);
+    --primary-color-rgb: 79, 209, 197;
 }
 
 * {
@@ -23,6 +24,10 @@ html {
     line-height: 1.6;
     scroll-behavior: smooth;
     overflow-x: hidden;
+}
+
+body.dark-theme {
+    --primary-color-rgb: 79, 209, 197;
 }
 
 a {
@@ -356,6 +361,111 @@ footer {
     }
 }
 
+/* About section styling */
+.about-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.about-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.highlight-item {
+    display: flex;
+    align-items: flex-start;
+    background: var(--card-bg);
+    padding: 1.25rem;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 250px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.highlight-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.highlight-icon {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+    margin-right: 1rem;
+    opacity: 0.9;
+}
+
+.highlight-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.highlight-content p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.about-bio, .about-experience {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 800px;
+}
+
+.interests-container {
+    margin-top: 1rem;
+}
+
+.interests-container h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.interests-container h3 i {
+    color: var(--primary-color);
+}
+
+.interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.interest-tag {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.2);
+    transition: all 0.3s ease;
+}
+
+.interest-tag:hover {
+    background: var(--primary-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
     h1 {
@@ -376,6 +486,14 @@ footer {
 
     .skills {
         flex-direction: column;
+    }
+
+    .profile-highlights {
+        flex-direction: column;
+    }
+    
+    .highlight-item {
+        width: 100%;
     }
 }
 
