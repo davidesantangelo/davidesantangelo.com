@@ -7,10 +7,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Davide Santangelo - Software Engineer</title>
 
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+
+    <!-- Critical CSS - inline or load first -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    </noscript>
+
+    <!-- Load icons asynchronously -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
+
     <!-- Animation libraries -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
@@ -47,13 +74,18 @@
                 <h1 class="animate__animated animate__fadeInUp">Davide Santangelo</h1>
                 <p id="typed-subtitle" class="subtitle"></p>
                 <div class="social-links animate__animated animate__fadeIn animate__delay-1s">
-                    <a href="https://www.linkedin.com/in/davidesantangelo/" target="_blank" class="social-link">
+                    <a href="https://www.linkedin.com/in/davidesantangelo/" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
                         <i class="fab fa-linkedin linkedin"></i> LinkedIn
                     </a>
-                    <a href="https://github.com/davidesantangelo" target="_blank" class="social-link">
+                    <a href="https://github.com/davidesantangelo" target="_blank" rel="noopener noreferrer"
+                        class="social-link">
                         <i class="fab fa-github github"></i> GitHub
                     </a>
-                    <a href="https://dev.to/daviducolo" target="_blank" class="social-link">
+                    <a href="https://x.com/daviducolo" target="_blank" rel="noopener noreferrer" class="social-link">
+                        <i class="fab fa-twitter twitter"></i> X
+                    </a>
+                    <a href="https://dev.to/daviducolo" target="_blank" rel="noopener noreferrer" class="social-link">
                         <i class="fab fa-dev dev"></i> Dev.to
                     </a>
                 </div>
@@ -221,11 +253,11 @@
         </footer>
     </div>
 
-    <!-- Animation libraries -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="js/main.js"></script>
+    <!-- Animation libraries - defer for better performance -->
+    <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script defer src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script defer src="js/main.js"></script>
 </body>
 
 </html>

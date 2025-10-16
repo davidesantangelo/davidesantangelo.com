@@ -13,6 +13,58 @@ document.addEventListener('DOMContentLoaded', function () {
     const head = doc.head;
 
     /**
+     * Page Loader
+     */
+    function initPageLoader() {
+        // Create loader element
+        const loader = doc.createElement('div');
+        loader.className = 'page-loader';
+        loader.innerHTML = `
+            <div class="loader-content">
+                <div class="loader-spinner"></div>
+                <div class="loader-text">LOADING</div>
+            </div>
+        `;
+        body.insertBefore(loader, body.firstChild);
+
+        // Hide loader when page is fully loaded
+        win.addEventListener('load', () => {
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                setTimeout(() => loader.remove(), 500);
+            }, 300);
+        });
+    }
+
+    /**
+     * Scroll Progress Bar
+     */
+    function initScrollProgress() {
+        const progressBar = doc.createElement('div');
+        progressBar.className = 'scroll-progress';
+        body.appendChild(progressBar);
+
+        let ticking = false;
+        const updateProgress = () => {
+            const scrollTop = win.pageYOffset || docEl.scrollTop;
+            const scrollHeight = docEl.scrollHeight - docEl.clientHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            progressBar.style.transform = `scaleX(${progress / 100})`;
+            ticking = false;
+        };
+
+        win.addEventListener('scroll', () => {
+            if (!ticking) {
+                win.requestAnimationFrame(updateProgress);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        updateProgress();
+        console.log("Scroll progress bar initialized.");
+    }
+
+    /**
      * Initializes the AOS (Animate On Scroll) library.
      */
     function initAOS() {
@@ -42,11 +94,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const style = doc.createElement('style');
             style.textContent = `
                 .typed-cursor {
-                    vertical-align: middle !important; /* Align cursor vertically */
-                    position: relative !important;    /* Ensure proper positioning */
-                    line-height: inherit !important; /* Inherit line height */
-                    display: inline-block !important;/* Prevent breaking layout */
-                    margin-left: 2px;                /* Space between text and cursor */
+                    display: inline !important;
+                    margin-left: 2px;
+                    opacity: 1 !important;
+                    animation: blink 0.7s infinite;
+                    font-size: 1.5rem;
+                    line-height: 1.6;
+                    vertical-align: baseline !important;
+                }
+                
+                /* Reserve space for the subtitle to prevent layout shift */
+                #typed-subtitle {
+                    min-height: 2.4rem;
+                    display: inline-block;
+                    vertical-align: baseline;
                 }
             `;
             head.appendChild(style);
@@ -57,14 +118,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Focused on search technologies and web development.',
                     'Creating modern, high-performance applications.'
                 ],
-                typeSpeed: 40, // Speed of typing
-                backSpeed: 20, // Speed of deleting
-                backDelay: 1500, // Delay before starting to delete
-                startDelay: 500, // Delay before typing starts
-                loop: true, // Loop the animation
-                showCursor: false, // Hide the blinking cursor
-                cursorChar: '|', // Character for the cursor (though hidden)
-                autoInsertCss: true // Let Typed.js inject basic CSS for the cursor
+                typeSpeed: 40,
+                backSpeed: 20,
+                backDelay: 1500,
+                startDelay: 500,
+                loop: true,
+                showCursor: true, // Show the blinking cursor
+                cursorChar: '|',
+                autoInsertCss: true
             });
             console.log("Typed.js initialized.");
         } else {
@@ -95,54 +156,58 @@ document.addEventListener('DOMContentLoaded', function () {
             particlesJS(particlesContainerId, {
                 particles: {
                     number: {
-                        value: 80, // Number of particles
-                        density: { enable: true, value_area: 800 } // Density adjustment
+                        value: 60, // Reduced for better performance
+                        density: { enable: true, value_area: 1000 }
                     },
-                    color: { value: primaryColor }, // Particle color from CSS variable
+                    color: { value: primaryColor },
                     shape: {
-                        type: "circle", // Shape of particles
-                        stroke: { width: 0, color: "#000000" } // No border
+                        type: "circle",
+                        stroke: { width: 0, color: "#000000" }
                     },
                     opacity: {
-                        value: 0.5, // Base opacity
-                        random: true, // Randomize opacity
-                        anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false } // Opacity animation
+                        value: 0.6,
+                        random: true,
+                        anim: { enable: true, speed: 0.5, opacity_min: 0.2, sync: false }
                     },
                     size: {
-                        value: 3, // Base size
-                        random: true, // Randomize size
-                        anim: { enable: false } // Size animation disabled
+                        value: 3,
+                        random: true,
+                        anim: { enable: true, speed: 2, size_min: 1, sync: false }
                     },
                     line_linked: {
-                        enable: true, // Draw lines between particles
-                        distance: 150, // Max distance for lines
-                        color: primaryColor, // Line color from CSS variable
-                        opacity: 0.4, // Line opacity
-                        width: 1 // Line width
+                        enable: true,
+                        distance: 150,
+                        color: primaryColor,
+                        opacity: 0.5,
+                        width: 1.5
                     },
                     move: {
-                        enable: true, // Particles move
-                        speed: 2, // Movement speed
-                        direction: "none", // Random direction
-                        random: true, // Randomize initial direction
-                        straight: false, // Particles move in curves
-                        out_mode: "out", // Particles disappear when leaving canvas
-                        bounce: false, // No bouncing off edges
+                        enable: true,
+                        speed: 1.5, // Smoother animation
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false,
+                        attract: { enable: false }
                     }
                 },
                 interactivity: {
-                    detect_on: "canvas", // Interaction detection area
+                    detect_on: "canvas",
                     events: {
-                        onhover: { enable: true, mode: "grab" }, // Grab effect on hover
-                        onclick: { enable: true, mode: "push" }, // Push effect on click
-                        resize: true // Recalculate on resize
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
                     },
                     modes: {
-                        grab: { distance: 140, line_linked: { opacity: 1 } }, // Grab mode settings
-                        push: { particles_nb: 4 } // Push mode settings (adds 4 particles on click)
+                        grab: { 
+                            distance: 180, 
+                            line_linked: { opacity: 0.8 } 
+                        },
+                        push: { particles_nb: 3 }
                     }
                 },
-                retina_detect: true // Enable retina display support
+                retina_detect: true
             });
             console.log("Particles.js initialized.");
         } else {
@@ -537,6 +602,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Initialize all modules ---
+    initPageLoader();
+    initScrollProgress();
     initAOS();
     initTyped();
     initParticles();
