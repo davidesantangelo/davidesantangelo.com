@@ -114,7 +114,7 @@ FEATURED PROJECTS:
                 children: {
                     'os_info.txt': {
                         type: 'file',
-                        content: `OS: DavideOS v1.2.0 (Web-based)
+                        content: `OS: DavideOS v1.3.0 (Web-based)
 Kernel: JavaScript V8
 Uptime: ${Math.floor(Math.random() * 10000)} seconds
 Shell: Bash (simulated)`
@@ -146,9 +146,16 @@ Shell: Bash (simulated)`
     let sudoUnlocked = false; // Track if secret has been unlocked
 
     // --- State Management ---
+    const MAX_HISTORY_SIZE = 100;
     let history = JSON.parse(localStorage.getItem('terminal_history')) || [];
+    // Trim history if it exceeds max size
+    if (history.length > MAX_HISTORY_SIZE) {
+        history = history.slice(-MAX_HISTORY_SIZE);
+        localStorage.setItem('terminal_history', JSON.stringify(history));
+    }
     let historyIndex = history.length;
     let activeGame = null; // Function to handle input if game is active
+    const sessionStartTime = Date.now();
 
     // Load saved theme
     const savedTheme = localStorage.getItem('terminal_theme');
@@ -161,7 +168,7 @@ Shell: Bash (simulated)`
     }
 
     // --- Initial Greeting ---
-    printOutput(`Welcome to Davide Santangelo's Terminal v1.2.0
+    printOutput(`Welcome to Davide Santangelo's Terminal v1.3.0
 Type 'help' to see available commands.
 `);
     updatePrompt();
@@ -173,7 +180,7 @@ Type 'help' to see available commands.
             
             if (activeGame) {
                 // Route input to active game
-                printOutput(`<span class="prompt">game></span> ${commandLine}`);
+                printOutput(`<span class="prompt">game></span> ${escapeHtml(commandLine)}`);
                 activeGame(commandLine);
             } else {
                 // Standard shell
@@ -181,7 +188,7 @@ Type 'help' to see available commands.
                     history.push(commandLine);
                     localStorage.setItem('terminal_history', JSON.stringify(history));
                     historyIndex = history.length;
-                    printOutput(`<span class="prompt">${getPromptString()}</span> ${commandLine}`);
+                    printOutput(`<span class="prompt">${getPromptString()}</span> ${escapeHtml(commandLine)}`);
                     executeCommand(commandLine);
                 } else {
                     printOutput(`<span class="prompt">${getPromptString()}</span>`);
@@ -280,8 +287,13 @@ I'm always open to interesting conversations about:
 
     function executeCommand(commandLine) {
         const parts = commandLine.split(' ');
-        const cmd = parts[0].toLowerCase();
+        let cmd = parts[0].toLowerCase();
         const args = parts.slice(1);
+
+        // Check for aliases
+        if (aliases[cmd]) {
+            cmd = aliases[cmd];
+        }
 
         if (commands[cmd]) {
             let result;
@@ -301,9 +313,46 @@ I'm always open to interesting conversations about:
         }
     }
 
+    // --- Command Aliases ---
+    const aliases = {
+        'll': 'ls',
+        'dir': 'ls',
+        'exit': 'reboot',
+        'quit': 'reboot',
+        'cls': 'clear'
+    };
+
     // --- Commands ---
     const commands = {
-        'help': 'Available commands: help, ls, cd [dir], cat [file], clear, whoami, date, open [url], sudo, theme [color], history, reboot, reset, pwd, socials, matrix',
+        'help': `
+  <span class="directory">Navigation</span>
+    ls            List directory contents
+    cd [dir]      Change directory
+    pwd           Print working directory
+    cat [file]    Display file contents
+
+  <span class="directory">System</span>
+    whoami        Display current user
+    date          Show current date/time
+    uptime        Show session uptime
+    neofetch      Display system info
+    clear         Clear terminal screen
+
+  <span class="directory">Utilities</span>
+    echo [text]   Print text to terminal
+    open [url]    Open URL in browser
+    history       Show command history
+    theme [color] Set theme (green|amber|blue|white)
+
+  <span class="directory">Fun</span>
+    matrix        Enter the Matrix
+    sudo          Elevate privileges
+
+  <span class="directory">Session</span>
+    reboot        Reload terminal
+    reset         Factory reset
+
+  <span class="info">Tip:</span> TAB to autocomplete, ↑↓ for history`,
         'ls': () => {
             const items = Object.keys(currentDir.children).map(name => {
                 const item = currentDir.children[name];
@@ -363,12 +412,31 @@ I'm always open to interesting conversations about:
             output.innerHTML = '';
             return '';
         },
-        'socials': () => {
-            return `Connect with me:
-- LinkedIn: https://www.linkedin.com/in/davidesantangelo/
-- GitHub: https://github.com/davidesantangelo
-- X: https://x.com/daviducolo
-- Dev.to: https://dev.to/daviducolo`;
+        'echo': (...args) => {
+            return escapeHtml(args.join(' '));
+        },
+        'uptime': () => {
+            const uptime = Date.now() - sessionStartTime;
+            return `Session uptime: ${formatUptime(uptime)}`;
+        },
+        'neofetch': () => {
+            const uptime = formatUptime(Date.now() - sessionStartTime);
+            const theme = localStorage.getItem('terminal_theme') || 'green';
+            const cores = navigator.hardwareConcurrency || '?';
+            const memory = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'N/A';
+            return `
+<span class="directory">guest</span>@<span class="executable">davidesantangelo.com</span>
+────────────────────────────
+<span class="directory">OS</span>       DavideOS v1.3.0
+<span class="directory">Host</span>     Web Browser
+<span class="directory">Kernel</span>   JavaScript ES2024
+<span class="directory">Uptime</span>   ${uptime}
+<span class="directory">Shell</span>    bash 5.0
+<span class="directory">Theme</span>    ${theme}
+<span class="directory">Terminal</span> 80x24
+<span class="directory">CPU</span>      ${cores} cores
+<span class="directory">Memory</span>   ${memory}
+`;
         },
         'open': (url) => {
             if (!url) return 'Usage: open [url]';
@@ -781,6 +849,9 @@ Type 'exit' to quit.
     }
 
     function startMatrixEffect() {
+        // Blur input to prevent key capture issues
+        input.blur();
+        
         const canvas = document.createElement('canvas');
         canvas.style.position = 'fixed';
         canvas.style.top = '0';
@@ -789,6 +860,7 @@ Type 'exit' to quit.
         canvas.style.height = '100%';
         canvas.style.zIndex = '1000';
         canvas.style.background = 'black';
+        canvas.style.cursor = 'pointer';
         document.body.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
@@ -797,42 +869,80 @@ Type 'exit' to quit.
 
         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%';
         const fontSize = 16;
-        const columns = canvas.width / fontSize;
+        const columns = Math.floor(canvas.width / fontSize);
         const drops = [];
 
         for (let x = 0; x < columns; x++) {
-            drops[x] = 1;
+            drops[x] = Math.floor(Math.random() * -100); // Staggered start
         }
 
+        let animationId = null;
+        let isRunning = true;
+
         function draw() {
+            if (!isRunning) return;
+            
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#0F0';
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
-                const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] > 0) {
+                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                }
 
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 drops[i]++;
             }
+            
+            animationId = requestAnimationFrame(draw);
         }
 
-        const interval = setInterval(draw, 33);
+        // Start animation
+        animationId = requestAnimationFrame(draw);
+
+        // Handle window resize with debounce
+        let resizeTimeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }, 100);
+        };
+        window.addEventListener('resize', handleResize);
 
         const stopMatrix = (e) => {
-            clearInterval(interval);
-            document.body.removeChild(canvas);
-            document.removeEventListener('keydown', stopMatrix);
-            document.removeEventListener('click', stopMatrix);
-            input.focus();
+            if (!isRunning) return;
+            isRunning = false;
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            
+            if (canvas.parentNode) {
+                document.body.removeChild(canvas);
+            }
+            
+            // Clean up all event listeners
+            document.removeEventListener('keydown', stopMatrix, true);
+            document.removeEventListener('click', stopMatrix, true);
+            canvas.removeEventListener('click', stopMatrix);
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeout);
+            
+            // Restore focus to input
+            setTimeout(() => input.focus(), 100);
         };
 
-        document.addEventListener('keydown', stopMatrix);
-        document.addEventListener('click', stopMatrix);
+        // Use capture phase to catch events before other handlers
+        document.addEventListener('keydown', stopMatrix, true);
+        document.addEventListener('click', stopMatrix, true);
+        canvas.addEventListener('click', stopMatrix);
     }
 
     function printOutput(text) {
@@ -848,6 +958,26 @@ Type 'exit' to quit.
 
     function scrollToBottom() {
         terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Format uptime
+    function formatUptime(ms) {
+        const seconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        
+        if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
+        if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+        if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+        return `${seconds}s`;
     }
 
     // Focus input on click

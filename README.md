@@ -45,17 +45,29 @@ A unique, interactive terminal-based portfolio website. Explore my professional 
 | `cd [dir]`      | Change directory (supports `..` and `/`) |
 | `pwd`           | Print working directory                  |
 | `cat [file]`    | Read the content of a file               |
+| `echo [text]`   | Display text                             |
 | `clear`         | Clear the terminal screen                |
 | `whoami`        | Display current user                     |
 | `date`          | Show current date and time               |
+| `uptime`        | Show session uptime                      |
+| `neofetch`      | Display system info with ASCII art       |
 | `open [url]`    | Open an external URL                     |
-| `socials`       | List all social media links              |
 | `theme [color]` | Change theme (green, amber, blue, white) |
 | `history`       | Show command history                     |
 | `matrix`        | Enter the Matrix...                      |
 | `reboot`        | Reboot the system (reload page)          |
 | `reset`         | Reset terminal to factory defaults       |
 | `sudo`          | Try it and discover what happens 😉      |
+
+### Command Aliases
+
+| Alias  | Command |
+| ------ | ------- |
+| `ll`   | `ls`    |
+| `dir`  | `ls`    |
+| `cls`  | `clear` |
+| `exit` | `reboot`|
+| `quit` | `reboot`|
 
 ## Easter Eggs
 
