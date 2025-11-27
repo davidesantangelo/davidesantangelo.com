@@ -13,7 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 children: {
                     'bio.txt': { 
                         type: 'file', 
-                        content: `I'm a software engineer specializing in web development, with a focus on building efficient and scalable solutions. My expertise spans across search technologies, API development, and high-performance applications.
+                        content: `Name: Davide Santangelo
+
+I'm a software engineer specializing in web development, with a focus on building efficient and scalable solutions. My expertise spans across search technologies, API development, and high-performance applications.
 
 I've worked across various environments from startups to enterprise companies, gaining experience with different technologies and methodologies. This diverse background has helped me develop strong problem-solving skills and adaptability to new challenges.` 
                     },
@@ -276,6 +278,43 @@ I'm always open to interesting conversations about:
         };
     }
 
+    function getAbsolutePath(path) {
+        if (path === '~') return [];
+        if (path.startsWith('~/')) {
+            path = path.substring(2);
+            return path.split('/').filter(p => p !== '');
+        }
+        
+        const parts = path.split('/').filter(p => p !== '');
+        let stack = path.startsWith('/') ? [] : [...currentPath];
+        
+        for (const part of parts) {
+            if (part === '.') continue;
+            if (part === '..') {
+                if (stack.length > 0) stack.pop();
+            } else {
+                stack.push(part);
+            }
+        }
+        return stack;
+    }
+
+    function getItem(path) {
+        if (!path) return null;
+        if (path === '/') return fileSystem;
+        
+        const absolutePath = getAbsolutePath(path);
+        let item = fileSystem;
+        
+        for (const part of absolutePath) {
+            if (item.type !== 'dir' || !item.children[part]) {
+                return null;
+            }
+            item = item.children[part];
+        }
+        return item;
+    }
+
     function getPromptString() {
         const pathStr = currentPath.length === 0 ? '~' : '~/' + currentPath.join('/');
         return `guest@davidesantangelo.com:${pathStr}$`;
@@ -330,6 +369,7 @@ I'm always open to interesting conversations about:
     cd [dir]      Change directory
     pwd           Print working directory
     cat [file]    Display file contents
+    grep [t] [f]  Search text in file
 
   <span class="directory">System</span>
     whoami        Display current user
@@ -353,9 +393,17 @@ I'm always open to interesting conversations about:
     reset         Factory reset
 
   <span class="info">Tip:</span> TAB to autocomplete, ↑↓ for history`,
-        'ls': () => {
-            const items = Object.keys(currentDir.children).map(name => {
-                const item = currentDir.children[name];
+        'ls': (dir) => {
+            let target = currentDir;
+            if (dir) {
+                const item = getItem(dir);
+                if (!item) return `ls: ${dir}: No such file or directory`;
+                if (item.type !== 'dir') return `ls: ${dir}: Not a directory`;
+                target = item;
+            }
+            
+            const items = Object.keys(target.children).map(name => {
+                const item = target.children[name];
                 if (item.type === 'dir') {
                     return `<span class="directory">${name}/</span>`;
                 } else if (item.type === 'executable') {
@@ -367,43 +415,90 @@ I'm always open to interesting conversations about:
             return items.join('  ');
         },
         'cd': (path) => {
-            if (!path || path === '~' || path === '/') {
+            if (!path || path === '~') {
                 currentPath = [];
                 currentDir = fileSystem;
                 updatePrompt();
                 return '';
             }
-            if (path === '..') {
-                if (currentPath.length > 0) {
-                    currentPath.pop();
-                    // Re-traverse from root
-                    currentDir = fileSystem;
-                    for (const p of currentPath) {
-                        currentDir = currentDir.children[p];
-                    }
-                    updatePrompt();
-                }
-                return '';
+            
+            const item = getItem(path);
+            
+            if (!item) {
+                return `cd: ${path}: No such file or directory`;
             }
             
-            // Simple relative path support (one level)
-            if (currentDir.children[path] && currentDir.children[path].type === 'dir') {
-                currentPath.push(path);
-                currentDir = currentDir.children[path];
-                updatePrompt();
-                return '';
+            if (item.type !== 'dir') {
+                return `cd: ${path}: Not a directory`;
             }
-            return `cd: ${path}: No such file or directory`;
+            
+            currentDir = item;
+            currentPath = getAbsolutePath(path);
+            updatePrompt();
+            return '';
         },
         'cat': (filename) => {
             if (!filename) return 'Usage: cat [filename]';
-            const item = currentDir.children[filename];
+            const item = getItem(filename);
             if (item) {
                 if (item.type === 'file') return item.content;
                 if (item.type === 'dir') return `cat: ${filename}: Is a directory`;
                 if (item.type === 'executable') return `cat: ${filename}: Is a binary file`;
             }
             return `cat: ${filename}: No such file or directory`;
+        },
+        'grep': (term, filename) => {
+            if (!term) return 'Usage: grep [term] [filename]';
+            if (!filename) return 'Usage: grep [term] [filename]';
+            
+            const item = getItem(filename);
+            
+            if (!item) {
+                return `grep: ${filename}: No such file or directory`;
+            }
+            
+            if (item.type === 'dir') {
+                return `grep: ${filename}: Is a directory`;
+            }
+            
+            if (item.type === 'executable') {
+                return `grep: ${filename}: Binary file matches`;
+            }
+            
+            const lines = item.content.split('\n');
+            const matches = [];
+            
+            lines.forEach((line, idx) => {
+                if (line.includes(term)) {
+                    matches.push({ line, lineNumber: idx + 1 });
+                }
+            });
+            
+            if (matches.length === 0) {
+                return '';
+            }
+            
+            return matches.map(({ line, lineNumber }) => {
+                let formattedLine = '';
+                let currentIndex = 0;
+                let matchIndex = line.indexOf(term, currentIndex);
+                
+                while (matchIndex !== -1) {
+                    // Text before match
+                    formattedLine += escapeHtml(line.substring(currentIndex, matchIndex));
+                    
+                    // Match
+                    formattedLine += `<span style="color: #111; background-color: var(--text-color); font-weight: bold;">${escapeHtml(term)}</span>`;
+                    
+                    currentIndex = matchIndex + term.length;
+                    matchIndex = line.indexOf(term, currentIndex);
+                }
+                
+                // Remaining text
+                formattedLine += escapeHtml(line.substring(currentIndex));
+                
+                return `<span style="opacity: 0.5; margin-right: 10px;">${lineNumber}</span>${formattedLine}`;
+            }).join('\n');
         },
         'pwd': () => '/' + currentPath.join('/'),
         'whoami': 'guest@davidesantangelo.com',
@@ -824,27 +919,61 @@ Type 'exit' to quit.
 
     function handleTabCompletion(currentInput) {
         const parts = currentInput.split(' ');
-        const lastPart = parts[parts.length - 1];
         
-        // Combine commands and current directory items
-        const available = [
-            ...Object.keys(commands),
-            ...Object.keys(currentDir.children)
-        ];
+        if (!currentInput.trim()) return;
 
-        const matches = available.filter(item => item.startsWith(lastPart));
-        
-        if (matches.length === 1) {
-            // If it's the first part, it's a command or executable
-            if (parts.length === 1) {
-                input.value = matches[0] + ' ';
-            } else {
-                parts[parts.length - 1] = matches[0];
-                input.value = parts.join(' ');
+        if (parts.length === 1) {
+            const cmd = parts[0];
+            const available = [
+                ...Object.keys(commands),
+                ...Object.keys(currentDir.children)
+            ];
+            const matches = available.filter(c => c.startsWith(cmd));
+            
+            if (matches.length === 1) {
+                let completion = matches[0];
+                if (currentDir.children[completion] && currentDir.children[completion].type === 'dir') {
+                    completion += '/';
+                } else {
+                    completion += ' ';
+                }
+                input.value = completion;
+            } else if (matches.length > 1) {
+                printOutput(`<span class="prompt">${getPromptString()}</span> ${currentInput}`);
+                printOutput(matches.join('  '));
             }
-        } else if (matches.length > 1) {
-            printOutput(`<span class="prompt">${getPromptString()}</span> ${currentInput}`);
-            printOutput(matches.join('  '));
+        } else {
+            const lastArg = parts[parts.length - 1];
+            let dirPath = '';
+            let searchTerm = lastArg;
+            
+            const lastSlash = lastArg.lastIndexOf('/');
+            if (lastSlash !== -1) {
+                dirPath = lastArg.substring(0, lastSlash + 1);
+                searchTerm = lastArg.substring(lastSlash + 1);
+            }
+            
+            let targetDir = dirPath ? getItem(dirPath) : currentDir;
+            
+            if (targetDir && targetDir.type === 'dir') {
+                const candidates = Object.keys(targetDir.children);
+                const matches = candidates.filter(c => c.startsWith(searchTerm));
+                
+                if (matches.length === 1) {
+                    const match = matches[0];
+                    const item = targetDir.children[match];
+                    const suffix = item.type === 'dir' ? '/' : '';
+                    
+                    parts[parts.length - 1] = dirPath + match + suffix;
+                    input.value = parts.join(' ');
+                } else if (matches.length > 1) {
+                    printOutput(`<span class="prompt">${getPromptString()}</span> ${currentInput}`);
+                    printOutput(matches.map(m => {
+                        const item = targetDir.children[m];
+                        return item.type === 'dir' ? m + '/' : m;
+                    }).join('  '));
+                }
+            }
         }
     }
 

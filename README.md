@@ -45,6 +45,7 @@ A unique, interactive terminal-based portfolio website. Explore my professional 
 | `cd [dir]`      | Change directory (supports `..` and `/`) |
 | `pwd`           | Print working directory                  |
 | `cat [file]`    | Read the content of a file               |
+| `grep [term] [file]` | Search for a string inside a file        |
 | `echo [text]`   | Display text                             |
 | `clear`         | Clear the terminal screen                |
 | `whoami`        | Display current user                     |
