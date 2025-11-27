@@ -137,6 +137,202 @@ a:hover {
     color: #000;
 }
 
+/* Directory and file styling */
+.directory {
+    color: #55aaff;
+    font-weight: bold;
+    text-shadow: 0 0 3px rgba(85, 170, 255, 0.6);
+}
+
+.executable {
+    color: #00ff88;
+    font-weight: bold;
+    text-shadow: 0 0 3px rgba(0, 255, 136, 0.6);
+}
+
+/* Tic-Tac-Toe Game Styles */
+.game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tictactoe-container {
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    border: 2px solid var(--text-color);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(51, 255, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.ttt-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.ttt-header h2 {
+    color: var(--text-color);
+    margin: 0 0 15px 0;
+    font-size: 28px;
+    text-shadow: 0 0 10px rgba(51, 255, 0, 0.5);
+    letter-spacing: 2px;
+}
+
+.ttt-turn {
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.ttt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 25px 0;
+    aspect-ratio: 1;
+}
+
+.ttt-cell {
+    background: #0d0d0d;
+    border: 2px solid var(--text-color);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 100px;
+}
+
+.ttt-cell:hover:not(.filled) {
+    background: rgba(51, 255, 0, 0.1);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(51, 255, 0, 0.4);
+}
+
+.ttt-cell.filled {
+    cursor: not-allowed;
+}
+
+.ttt-cell.player-x {
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+    animation: cellPop 0.3s ease;
+}
+
+.ttt-cell.player-o {
+    color: #ff5555;
+    text-shadow: 0 0 10px rgba(255, 85, 85, 0.8);
+    animation: cellPop 0.3s ease;
+}
+
+@keyframes cellPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.ttt-cell.winning-cell {
+    background: rgba(255, 255, 0, 0.2);
+    animation: winPulse 0.6s ease infinite;
+}
+
+@keyframes winPulse {
+    0%, 100% { 
+        box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 30px rgba(255, 255, 0, 0.9);
+        transform: scale(1.1);
+    }
+}
+
+.ttt-footer {
+    border-top: 1px solid var(--text-color);
+    padding-top: 20px;
+}
+
+.ttt-scores {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.ttt-scores span {
+    color: #ffff00;
+    font-weight: bold;
+}
+
+.ttt-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.ttt-btn {
+    background: var(--text-color);
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ttt-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(51, 255, 0, 0.4);
+}
+
+.ttt-btn:active {
+    transform: translateY(0);
+}
+
+.ttt-btn-close {
+    background: #ff5555;
+}
+
+.ttt-btn-close:hover {
+    box-shadow: 0 5px 15px rgba(255, 85, 85, 0.4);
+}
+
 /* Mobile adjustments */
 @media (max-width: 600px) {
     :root {
@@ -144,5 +340,23 @@ a:hover {
     }
     .terminal {
         padding: 10px;
+    }
+    
+    .tictactoe-container {
+        padding: 20px;
+    }
+    
+    .ttt-header h2 {
+        font-size: 22px;
+    }
+    
+    .ttt-cell {
+        font-size: 36px;
+        min-height: 80px;
+    }
+    
+    .ttt-btn {
+        padding: 10px 16px;
+        font-size: 12px;
     }
 }

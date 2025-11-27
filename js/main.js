@@ -134,7 +134,8 @@ Shell: Bash (simulated)`
                 type: 'dir',
                 children: {
                     'guess': { type: 'executable', run: startGuessGame },
-                    'rps': { type: 'executable', run: startRPSGame }
+                    'rps': { type: 'executable', run: startRPSGame },
+                    'tictactoe': { type: 'executable', run: startTicTacToe }
                 }
             }
         }
@@ -306,7 +307,13 @@ I'm always open to interesting conversations about:
         'ls': () => {
             const items = Object.keys(currentDir.children).map(name => {
                 const item = currentDir.children[name];
-                return item.type === 'dir' ? name + '/' : name;
+                if (item.type === 'dir') {
+                    return `<span class="directory">${name}/</span>`;
+                } else if (item.type === 'executable') {
+                    return `<span class="executable">${name}</span>`;
+                } else {
+                    return name;
+                }
             });
             return items.join('  ');
         },
@@ -506,6 +513,217 @@ Type 'exit' to quit.
         }
         
         printOutput('Play again? (rock/paper/scissors/exit)');
+    }
+
+    function startTicTacToe() {
+        printOutput('Launching Tic-Tac-Toe with graphical interface...');
+        
+        // Create popup overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'game-overlay';
+        
+        // Create game container
+        const gameContainer = document.createElement('div');
+        gameContainer.className = 'tictactoe-container';
+        
+        // Game state
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameOver = false;
+        let scores = { X: 0, O: 0, ties: 0 };
+        
+        // Create header
+        const header = document.createElement('div');
+        header.className = 'ttt-header';
+        header.innerHTML = `
+            <h2>TIC-TAC-TOE</h2>
+            <div class="ttt-turn">Your turn (X)</div>
+        `;
+        
+        // Create grid
+        const grid = document.createElement('div');
+        grid.className = 'ttt-grid';
+        
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'ttt-cell';
+            cell.dataset.index = i;
+            cell.addEventListener('click', () => handleCellClick(i));
+            grid.appendChild(cell);
+        }
+        
+        // Create footer with scores and controls
+        const footer = document.createElement('div');
+        footer.className = 'ttt-footer';
+        footer.innerHTML = `
+            <div class="ttt-scores">
+                <div>You (X): <span id="score-x">0</span></div>
+                <div>CPU (O): <span id="score-o">0</span></div>
+                <div>Ties: <span id="score-ties">0</span></div>
+            </div>
+            <div class="ttt-controls">
+                <button class="ttt-btn ttt-btn-reset">New Game</button>
+                <button class="ttt-btn ttt-btn-close">Close</button>
+            </div>
+        `;
+        
+        gameContainer.appendChild(header);
+        gameContainer.appendChild(grid);
+        gameContainer.appendChild(footer);
+        overlay.appendChild(gameContainer);
+        document.body.appendChild(overlay);
+        
+        // Event listeners
+        footer.querySelector('.ttt-btn-reset').addEventListener('click', resetGame);
+        footer.querySelector('.ttt-btn-close').addEventListener('click', closeGame);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeGame();
+        });
+        
+        function handleCellClick(index) {
+            if (board[index] !== '' || gameOver || currentPlayer !== 'X') return;
+            
+            makeMove(index, 'X');
+            
+            if (!gameOver) {
+                currentPlayer = 'O';
+                updateTurnDisplay();
+                // CPU move after a short delay
+                setTimeout(() => {
+                    if (!gameOver) {
+                        const cpuMove = getBestMove();
+                        makeMove(cpuMove, 'O');
+                        currentPlayer = 'X';
+                        updateTurnDisplay();
+                    }
+                }, 500);
+            }
+        }
+        
+        function makeMove(index, player) {
+            board[index] = player;
+            const cell = grid.children[index];
+            cell.textContent = player;
+            cell.classList.add('filled', `player-${player.toLowerCase()}`);
+            
+            const winner = checkWinner();
+            if (winner) {
+                gameOver = true;
+                if (winner === 'tie') {
+                    scores.ties++;
+                    document.getElementById('score-ties').textContent = scores.ties;
+                    header.querySelector('.ttt-turn').textContent = "It's a tie!";
+                    header.querySelector('.ttt-turn').style.color = '#ffff00';
+                } else {
+                    scores[winner]++;
+                    document.getElementById(`score-${winner.toLowerCase()}`).textContent = scores[winner];
+                    const winnerName = winner === 'X' ? 'You win!' : 'CPU wins!';
+                    header.querySelector('.ttt-turn').textContent = winnerName;
+                    header.querySelector('.ttt-turn').style.color = winner === 'X' ? '#00ff88' : '#ff5555';
+                    highlightWinningCells();
+                }
+            }
+        }
+        
+        function checkWinner() {
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6] // diagonals
+            ];
+            
+            for (const [a, b, c] of lines) {
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            
+            if (board.every(cell => cell !== '')) {
+                return 'tie';
+            }
+            
+            return null;
+        }
+        
+        function highlightWinningCells() {
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            
+            for (const [a, b, c] of lines) {
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    grid.children[a].classList.add('winning-cell');
+                    grid.children[b].classList.add('winning-cell');
+                    grid.children[c].classList.add('winning-cell');
+                    break;
+                }
+            }
+        }
+        
+        function getBestMove() {
+            // Simple AI: try to win, block player, or take center/corner
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            
+            // Try to win
+            for (const [a, b, c] of lines) {
+                if (board[a] === 'O' && board[b] === 'O' && board[c] === '') return c;
+                if (board[a] === 'O' && board[c] === 'O' && board[b] === '') return b;
+                if (board[b] === 'O' && board[c] === 'O' && board[a] === '') return a;
+            }
+            
+            // Block player
+            for (const [a, b, c] of lines) {
+                if (board[a] === 'X' && board[b] === 'X' && board[c] === '') return c;
+                if (board[a] === 'X' && board[c] === 'X' && board[b] === '') return b;
+                if (board[b] === 'X' && board[c] === 'X' && board[a] === '') return a;
+            }
+            
+            // Take center
+            if (board[4] === '') return 4;
+            
+            // Take corners
+            const corners = [0, 2, 6, 8];
+            const availableCorners = corners.filter(i => board[i] === '');
+            if (availableCorners.length > 0) {
+                return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+            }
+            
+            // Take any available
+            const available = board.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+            return available[Math.floor(Math.random() * available.length)];
+        }
+        
+        function updateTurnDisplay() {
+            const turnDisplay = header.querySelector('.ttt-turn');
+            if (!gameOver) {
+                turnDisplay.textContent = currentPlayer === 'X' ? 'Your turn (X)' : 'CPU thinking...';
+                turnDisplay.style.color = 'var(--text-color)';
+            }
+        }
+        
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameOver = false;
+            
+            Array.from(grid.children).forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'ttt-cell';
+            });
+            
+            updateTurnDisplay();
+        }
+        
+        function closeGame() {
+            document.body.removeChild(overlay);
+            input.focus();
+        }
     }
 
     // --- Helpers ---
