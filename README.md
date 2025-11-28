@@ -56,6 +56,7 @@ A unique, interactive terminal-based portfolio website. Explore my professional 
 | `theme [color]` | Change theme (green, amber, blue, white) |
 | `history`       | Show command history                     |
 | `matrix`        | Enter the Matrix...                      |
+| `web`           | Switch to minimal web version            |
 | `reboot`        | Reboot the system (reload page)          |
 | `reset`         | Reset terminal to factory defaults       |
 | `sudo`          | Try it and discover what happens 😉      |

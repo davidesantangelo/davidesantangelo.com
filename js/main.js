@@ -116,7 +116,7 @@ FEATURED PROJECTS:
                 children: {
                     'os_info.txt': {
                         type: 'file',
-                        content: `OS: DavideOS v1.3.0 (Web-based)
+                        content: `OS: DavideOS v1.0.0 (Web-based)
 Kernel: JavaScript V8
 Uptime: ${Math.floor(Math.random() * 10000)} seconds
 Shell: Bash (simulated)`
@@ -170,8 +170,8 @@ Shell: Bash (simulated)`
     }
 
     // --- Initial Greeting ---
-    printOutput(`Welcome to Davide Santangelo's Terminal v1.3.0
-Type 'help' to see available commands.
+    printOutput(`Welcome to Davide Santangelo's Terminal v1.0.0
+Type 'help' to see available commands or 'web' to switch to the web version.
 `);
     updatePrompt();
 
@@ -388,6 +388,9 @@ I'm always open to interesting conversations about:
     matrix        Enter the Matrix
     sudo          Elevate privileges
 
+  <span class="directory">View</span>
+    web           Switch to minimal web version
+
   <span class="directory">Session</span>
     reboot        Reload terminal
     reset         Factory reset
@@ -522,7 +525,7 @@ I'm always open to interesting conversations about:
             return `
 <span class="directory">guest</span>@<span class="executable">davidesantangelo.com</span>
 ────────────────────────────
-<span class="directory">OS</span>       DavideOS v1.3.0
+<span class="directory">OS</span>       DavideOS v1.0.0
 <span class="directory">Host</span>     Web Browser
 <span class="directory">Kernel</span>   JavaScript ES2024
 <span class="directory">Uptime</span>   ${uptime}
@@ -592,6 +595,12 @@ Type 'cd .secret' to explore it.`;
         'matrix': () => {
             startMatrixEffect();
             return 'Follow the white rabbit... (Press any key to exit)';
+        },
+        'web': () => {
+            setTimeout(() => {
+                window.location.href = 'web.html';
+            }, 500);
+            return 'Switching to minimal web version...';
         }
     };
 
